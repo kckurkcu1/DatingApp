@@ -94,6 +94,36 @@ namespace API.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("API.Entities.Connection", b =>
+                {
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GroupName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ConnectionId");
+
+                    b.HasIndex("GroupName");
+
+                    b.ToTable("Connections");
+                });
+
+            modelBuilder.Entity("API.Entities.Group", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("Groups");
+                });
+
             modelBuilder.Entity("API.Entities.Member", b =>
                 {
                     b.Property<string>("Id")
@@ -241,21 +271,21 @@ namespace API.Data.Migrations
                         new
                         {
                             Id = "member-id",
-                            ConcurrencyStamp = "8afa3803-1d1e-4bfc-afd4-01f559d29978",
+                            ConcurrencyStamp = "61aecbf3-863a-44d1-975e-cf7b095fa0ff",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
                             Id = "moderator-id",
-                            ConcurrencyStamp = "4aa79d8b-4770-4e1d-a9a4-f45aebe0046d",
+                            ConcurrencyStamp = "0efd5f40-cf80-4d50-9c25-67bc3d9cad18",
                             Name = "Moderator",
                             NormalizedName = "MODERATOR"
                         },
                         new
                         {
                             Id = "admin-id",
-                            ConcurrencyStamp = "9e7cf250-7472-4b00-88ea-6b0ccea4a7bc",
+                            ConcurrencyStamp = "50407bcd-81a8-4cd4-9994-c02ea9625a30",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -361,6 +391,17 @@ namespace API.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("API.Entities.Connection", b =>
+                {
+                    b.HasOne("API.Entities.Group", "Group")
+                        .WithMany("Connections")
+                        .HasForeignKey("GroupName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("API.Entities.Member", b =>
@@ -478,6 +519,11 @@ namespace API.Data.Migrations
                 {
                     b.Navigation("Member")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("API.Entities.Group", b =>
+                {
+                    b.Navigation("Connections");
                 });
 
             modelBuilder.Entity("API.Entities.Member", b =>
